@@ -4,10 +4,11 @@ import { createEvent, getEventById, updateEvent } from "../api/eventApi";
 
 export default function EventFormPage() {
   const [form, setForm] = useState({
-    name: "",
+    title: "",
     date: "",
     location: "",
     description: "",
+    capacity: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,22 +20,19 @@ export default function EventFormPage() {
   useEffect(() => {
     async function loadEvent() {
       if (!isEditMode) return;
-
       try {
-        const data = await getEventById(id);
-        const event = data;
-
+        const event = await getEventById(id);
         setForm({
-          name: event.name || "",
+          title: event.title || "",
           date: event.date ? event.date.split("T")[0] : "",
           location: event.location || "",
           description: event.description || "",
+          capacity: event.capacity || "",
         });
       } catch (err) {
         setError(err.message);
       }
     }
-
     loadEvent();
   }, [id, isEditMode]);
 
@@ -45,17 +43,14 @@ export default function EventFormPage() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
     try {
       setLoading(true);
       setError("");
-
       if (isEditMode) {
         await updateEvent(id, form);
       } else {
         await createEvent(form);
       }
-
       navigate("/events");
     } catch (err) {
       setError(err.message);
@@ -72,11 +67,11 @@ export default function EventFormPage() {
 
       <form onSubmit={handleSubmit} className="form-card">
         <label>
-          Event Name
+          Event Title
           <input
             type="text"
-            name="name"
-            value={form.name}
+            name="title"
+            value={form.title}
             onChange={handleChange}
             required
           />
@@ -104,25 +99,36 @@ export default function EventFormPage() {
           />
         </label>
 
-        <label className="textarea-group">
-            Description
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              required
-              className="fixed-textarea"
-        />
+        <label>
+          Capacity
+          <input
+            type="number"
+            name="capacity"
+            value={form.capacity}
+            onChange={handleChange}
+            min="1"
+            required
+          />
         </label>
-        
-        <div className="form-actions">
-            <button type="submit" className="primary-btn" disabled={loading}>
-            {loading ? "Saving..." : isEditMode ? "Update Event" : "Create Event"}
-            </button>
 
-        <Link to="/events" className="primary-btn">
-        Back
-        </Link>
+        <label className="textarea-group">
+          Description
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            required
+            className="fixed-textarea"
+          />
+        </label>
+
+        <div className="form-actions">
+          <button type="submit" className="primary-btn" disabled={loading}>
+            {loading ? "Saving..." : isEditMode ? "Update Event" : "Create Event"}
+          </button>
+          <Link to="/events" className="primary-btn">
+            Back
+          </Link>
         </div>
       </form>
     </div>

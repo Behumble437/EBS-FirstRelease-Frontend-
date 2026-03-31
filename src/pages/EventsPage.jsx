@@ -7,12 +7,12 @@ export default function EventsPage() {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const { user } = useAuth();
+  const { user, isLoggedIn } = useAuth();
 
   async function loadEvents() {
     try {
       const data = await getEvents();
-      setEvents(data.events || []);
+      setEvents(Array.isArray(data) ? data : []);
     } catch (err) {
       setError(err.message);
     }
@@ -23,6 +23,7 @@ export default function EventsPage() {
   }, []);
 
   async function handleDelete(id) {
+    if (!window.confirm("Delete this event?")) return;
     try {
       setError("");
       setSuccess("");
@@ -54,24 +55,29 @@ export default function EventsPage() {
         <div className="card-grid">
           {events.map((event) => (
             <div key={event._id} className="info-card">
-              <h3>{event.name}</h3>
+              <h3>{event.title}</h3>
               <p><strong>Date:</strong> {new Date(event.date).toLocaleDateString()}</p>
               <p><strong>Location:</strong> {event.location}</p>
+              <p><strong>Capacity:</strong> {event.capacity}</p>
               <p><strong>Description:</strong> {event.description}</p>
 
-              {user?.role === "admin" && (
-                <div className="card-actions">
-                  <Link to={`/events/edit/${event._id}`} className="secondary-btn">
-                    Edit
+              <div className="card-actions">
+                {isLoggedIn && (
+                  <Link to={`/bookings/new?eventId=${event._id}`} className="secondary-btn">
+                    Book Tickets
                   </Link>
-                  <button
-                  className="text-btn"
-                  onClick={() => handleDelete(event._id)}
-                  >
-                  Delete
-                  </button>
-                </div>
-              )}
+                )}
+                {user?.role === "admin" && (
+                  <>
+                    <Link to={`/events/edit/${event._id}`} className="secondary-btn">
+                      Edit
+                    </Link>
+                    <button className="text-btn" onClick={() => handleDelete(event._id)}>
+                      Delete
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           ))}
         </div>
