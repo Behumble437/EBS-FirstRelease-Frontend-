@@ -65,10 +65,10 @@ export default function EventsPage() {
                     Edit
                   </Link>
                   <button
-                    className="danger-btn"
-                    onClick={() => handleDelete(event._id)}
+                  className="text-btn"
+                  onClick={() => handleDelete(event._id)}
                   >
-                    Delete
+                  Delete
                   </button>
                 </div>
               )}

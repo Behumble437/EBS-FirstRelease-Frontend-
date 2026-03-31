@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { createEvent, getEventById, updateEvent } from "../api/eventApi";
 
 export default function EventFormPage() {
@@ -104,19 +104,26 @@ export default function EventFormPage() {
           />
         </label>
 
-        <label>
-          Description
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            required
-          />
+        <label className="textarea-group">
+            Description
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              required
+              className="fixed-textarea"
+        />
         </label>
+        
+        <div className="form-actions">
+            <button type="submit" className="primary-btn" disabled={loading}>
+            {loading ? "Saving..." : isEditMode ? "Update Event" : "Create Event"}
+            </button>
 
-        <button type="submit" className="primary-btn" disabled={loading}>
-          {loading ? "Saving..." : isEditMode ? "Update Event" : "Create Event"}
-        </button>
+        <Link to="/events" className="primary-btn">
+        Back
+        </Link>
+        </div>
       </form>
     </div>
   );

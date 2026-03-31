@@ -9,7 +9,9 @@ export default function HomePage() {
         Find an event that fits your vibe and reserve your spot in seconds.
       </p>
 
-      <h4 className="hero-title">Event List</h4>
+      <Link to="/events" className="primary-btn">
+        View Events
+      </Link>
 
     </div>
   );
