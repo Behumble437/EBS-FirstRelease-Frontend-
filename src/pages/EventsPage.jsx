@@ -12,7 +12,7 @@ export default function EventsPage() {
   async function loadEvents() {
     try {
       const data = await getEvents();
-      setEvents(Array.isArray(data) ? data : []);
+      setEvents(Array.isArray(data) ? data : (data.events || []));
     } catch (err) {
       setError(err.message);
     }
