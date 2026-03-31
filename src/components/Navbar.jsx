@@ -23,6 +23,7 @@ export default function Navbar() {
 
       <div className="navbar-center">
         <Link to="/">Home</Link>
+        <Link to="/events">Events</Link>
       </div>
 
       <div className="navbar-right">
@@ -40,6 +41,7 @@ export default function Navbar() {
           <>
             <Link to="/login">Login</Link>
             <Link to="/register">Register</Link>
+            
           </>
         ) : (
           <button onClick={handleLogout}>Logout</button>
