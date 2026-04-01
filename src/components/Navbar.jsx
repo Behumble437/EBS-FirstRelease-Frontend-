@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { isAdminRole } from "../utils/roles";
 
 export default function Navbar() {
   const { isLoggedIn, logout, user } = useAuth();
@@ -33,7 +34,7 @@ export default function Navbar() {
             <span className="user-label">Signed in as</span>
             <span className="user-name">
               {user?.name || user?.email}
-              {user?.role === "admin" ? " (Admin)" : ""}
+              {isAdminRole(user?.role) ? " (Admin)" : ""}
             </span>
           </div>
         )}

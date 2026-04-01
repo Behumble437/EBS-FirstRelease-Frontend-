@@ -1,29 +1,34 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+import { getApiBaseUrl } from "../config/apiBase";
+import {
+  asBookingList,
+  mapBookingEventTitles,
+  parseResponseBody,
+} from "./normalizeResponse";
 
 function getToken() {
   return localStorage.getItem("token");
 }
 
 export async function getBookings() {
-  const res = await fetch(`${API_BASE_URL}/api/bookings`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/bookings`, {
     headers: { Authorization: `Bearer ${getToken()}` },
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "Failed to fetch bookings");
-  return data;
+  return asBookingList(data).map(mapBookingEventTitles);
 }
 
 export async function getBookingById(id) {
-  const res = await fetch(`${API_BASE_URL}/api/bookings/${id}`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/bookings/${id}`, {
     headers: { Authorization: `Bearer ${getToken()}` },
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.message || "Failed to fetch booking");
-  return data;
+  return mapBookingEventTitles(data);
 }
 
 export async function createBooking(formData) {
-  const res = await fetch(`${API_BASE_URL}/api/bookings`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/bookings`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -37,7 +42,7 @@ export async function createBooking(formData) {
 }
 
 export async function updateBooking(id, formData) {
-  const res = await fetch(`${API_BASE_URL}/api/bookings/${id}`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/bookings/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
@@ -51,11 +56,11 @@ export async function updateBooking(id, formData) {
 }
 
 export async function deleteBooking(id) {
-  const res = await fetch(`${API_BASE_URL}/api/bookings/${id}`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/bookings/${id}`, {
     method: "DELETE",
     headers: { Authorization: `Bearer ${getToken()}` },
   });
-  const data = await res.json();
+  const data = await parseResponseBody(res);
   if (!res.ok) throw new Error(data.message || "Failed to delete booking");
   return data;
 }

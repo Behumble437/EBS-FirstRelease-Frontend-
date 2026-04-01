@@ -22,7 +22,7 @@ export default function BookingFormPage() {
     async function loadData() {
       try {
         const eventsData = await getEvents();
-        setEvents(Array.isArray(eventsData) ? eventsData : []);
+        setEvents(eventsData);
 
         const preselectedEventId = searchParams.get("eventId");
         if (preselectedEventId) {

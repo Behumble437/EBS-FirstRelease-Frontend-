@@ -1,39 +1,57 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+import { getApiBaseUrl } from "../config/apiBase";
+import {
+  asEventList,
+  parseResponseBody,
+  withEventTitleField,
+} from "./normalizeResponse";
 
 function getToken() {
   return localStorage.getItem("token");
 }
 
+function toEventWriteBody(formData) {
+  return {
+    name: formData.title ?? formData.name ?? "",
+    date: formData.date,
+    location: formData.location,
+    description: formData.description,
+    capacity:
+      formData.capacity === "" || formData.capacity === undefined
+        ? 0
+        : Number(formData.capacity),
+  };
+}
+
 export async function getEvents() {
-  const res = await fetch(`${API_BASE_URL}/api/events`);
+  const res = await fetch(`${getApiBaseUrl()}/api/events`);
   const data = await res.json();
 
   if (!res.ok) {
     throw new Error(data.message || "Failed to fetch events");
   }
 
-  return data;
+  return asEventList(data).map(withEventTitleField);
 }
 
 export async function getEventById(id) {
-  const res = await fetch(`${API_BASE_URL}/api/events/${id}`);
+  const res = await fetch(`${getApiBaseUrl()}/api/events/${id}`);
   const data = await res.json();
 
   if (!res.ok) {
     throw new Error(data.message || "Failed to fetch event");
   }
 
-  return data;
+  return withEventTitleField(data);
 }
 
 export async function createEvent(formData) {
-  const res = await fetch(`${API_BASE_URL}/api/events`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/events`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
     },
-    body: JSON.stringify(formData),
+    body: JSON.stringify(toEventWriteBody(formData)),
   });
 
   const data = await res.json();
@@ -46,13 +64,13 @@ export async function createEvent(formData) {
 }
 
 export async function updateEvent(id, formData) {
-  const res = await fetch(`${API_BASE_URL}/api/events/${id}`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/events/${id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${getToken()}`,
     },
-    body: JSON.stringify(formData),
+    body: JSON.stringify(toEventWriteBody(formData)),
   });
 
   const data = await res.json();
@@ -65,14 +83,14 @@ export async function updateEvent(id, formData) {
 }
 
 export async function deleteEvent(id) {
-  const res = await fetch(`${API_BASE_URL}/api/events/${id}`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/events/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${getToken()}`,
     },
   });
 
-  const data = await res.json();
+  const data = await parseResponseBody(res);
 
   if (!res.ok) {
     throw new Error(data.message || "Failed to delete event");

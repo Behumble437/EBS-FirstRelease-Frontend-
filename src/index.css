@@ -72,15 +72,11 @@ label {
   color: #374151;
 }
 
-/* ── Layout ── */
-
 .page-container {
   max-width: 1100px;
   margin: 40px auto;
   padding: 0 20px 60px;
 }
-
-/* ── Navbar ── */
 
 .navbar {
   min-height: 72px;
@@ -201,8 +197,6 @@ label {
   color: white;
 }
 
-/* ── Cards ── */
-
 .card {
   background-color: white;
   padding: 32px;
@@ -269,8 +263,6 @@ label {
   flex-wrap: wrap;
 }
 
-/* ── Typography ── */
-
 .section-title {
   margin-top: 0;
   margin-bottom: 16px;
@@ -309,8 +301,6 @@ label {
   margin-bottom: 12px;
   font-size: 14px;
 }
-
-/* ── Forms ── */
 
 .form-card {
   max-width: 460px;
@@ -366,8 +356,6 @@ label {
   width: 200px;
   text-align: center;
 }
-
-/* ── Buttons ── */
 
 .primary-btn {
   display: inline-block;
@@ -459,8 +447,6 @@ label {
   color: #3730a3;
 }
 
-/* ── Hero ── */
-
 .hero {
   padding: 60px 40px;
   background: linear-gradient(135deg, #eff6ff 0%, #eef2ff 100%);
@@ -499,8 +485,6 @@ label {
   justify-content: center;
 }
 
-/* ── Status badges ── */
-
 .status-badge {
   display: inline-block;
   padding: 2px 10px;
@@ -516,8 +500,6 @@ label {
 .status-paid       { background-color: #dcfce7; color: #15803d; }
 .status-unpaid     { background-color: #fee2e2; color: #dc2626; }
 .status-refunded   { background-color: #e0f2fe; color: #0369a1; }
-
-/* ── Responsive ── */
 
 @media (max-width: 900px) {
   .navbar {

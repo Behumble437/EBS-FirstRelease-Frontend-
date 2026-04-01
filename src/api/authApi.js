@@ -1,7 +1,7 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+import { getApiBaseUrl } from "../config/apiBase";
 
 export async function loginUser(formData) {
-  const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
@@ -13,11 +13,19 @@ export async function loginUser(formData) {
     throw new Error(data.message || "Login failed");
   }
 
-  return data;
+  const token = data.token ?? data.accessToken;
+  if (!token) {
+    throw new Error("Login response missing token. Check backend auth payload.");
+  }
+  if (!data.user) {
+    throw new Error("Login response missing user. Check backend auth payload.");
+  }
+
+  return { user: data.user, token };
 }
 
 export async function registerUser(formData) {
-  const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
+  const res = await fetch(`${getApiBaseUrl()}/api/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),

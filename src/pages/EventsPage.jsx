@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getEvents, deleteEvent } from "../api/eventApi";
 import { useAuth } from "../context/AuthContext";
+import { isAdminRole } from "../utils/roles";
 
 export default function EventsPage() {
   const [events, setEvents] = useState([]);
@@ -12,7 +13,7 @@ export default function EventsPage() {
   async function loadEvents() {
     try {
       const data = await getEvents();
-      setEvents(Array.isArray(data) ? data : (data.events || []));
+      setEvents(data);
     } catch (err) {
       setError(err.message);
     }
@@ -39,7 +40,7 @@ export default function EventsPage() {
     <div className="page-card">
       <div className="page-header-row">
         <h1>Events</h1>
-        {user?.role === "admin" && (
+        {isAdminRole(user?.role) && (
           <Link to="/events/new" className="primary-btn">
             Add Event
           </Link>
@@ -67,7 +68,7 @@ export default function EventsPage() {
                     Book Tickets
                   </Link>
                 )}
-                {user?.role === "admin" && (
+                {isAdminRole(user?.role) && (
                   <>
                     <Link to={`/events/edit/${event._id}`} className="secondary-btn">
                       Edit

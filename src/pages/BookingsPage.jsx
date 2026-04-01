@@ -10,7 +10,7 @@ export default function BookingsPage() {
   async function loadBookings() {
     try {
       const data = await getBookings();
-      setBookings(Array.isArray(data) ? data : []);
+      setBookings(data);
     } catch (err) {
       setError(err.message);
     }
