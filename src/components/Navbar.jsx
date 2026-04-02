@@ -1,51 +1,47 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { isAdminRole } from "../utils/roles";
 
 export default function Navbar() {
-  const { isLoggedIn, logout, user } = useAuth();
   const navigate = useNavigate();
+  const { isLoggedIn, user, logout } = useAuth();
 
-  const handleLogout = () => {
+  function handleLogout() {
     logout();
     navigate("/login");
-  };
+  }
 
   return (
     <header className="navbar">
       <div className="navbar-left">
-        <Link to="/" className="navbar-brand">
-          Event Booking System
-        </Link>
-        <p className="navbar-subtitle">
+        <h2 className="navbar-logo">EBS</h2>
+        <p className="navbar-tagline">
           Discover, choose, and reserve events with ease.
         </p>
       </div>
 
       <div className="navbar-center">
-        <Link to="/">Home</Link>
-        <Link to="/events">Events</Link>
-        {isLoggedIn && <Link to="/bookings">My Bookings</Link>}
+        {isLoggedIn && (
+          <>
+            <Link to="/">Home</Link>
+            <Link to="/events">Events</Link>
+            <Link to="/bookings">My Bookings</Link>
+          </>
+        )}
       </div>
 
       <div className="navbar-right">
-        {isLoggedIn && (
-          <div className="user-badge">
-            <span className="user-label">Signed in as</span>
-            <span className="user-name">
-              {user?.name || user?.email}
-              {isAdminRole(user?.role) ? " (Admin)" : ""}
-            </span>
-          </div>
-        )}
-
-        {!isLoggedIn ? (
+        {isLoggedIn ? (
           <>
-            <Link to="/login">Login</Link>
-            <Link to="/register">Register</Link>
+            <div className="user-badge">
+              <span className="user-label">Signed in as</span>
+              <span className="user-name">
+                {user?.name || user?.email || "User"}
+              </span>
+            </div>
+            <button onClick={handleLogout}>Logout</button>
           </>
         ) : (
-          <button onClick={handleLogout}>Logout</button>
+          <Link to="/login">Login</Link>
         )}
       </div>
     </header>

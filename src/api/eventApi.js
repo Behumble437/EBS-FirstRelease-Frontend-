@@ -19,9 +19,12 @@ function toEventWriteBody(formData) {
       formData.capacity === "" || formData.capacity === undefined
         ? 0
         : Number(formData.capacity),
+    pricePerTicket:
+      formData.pricePerTicket === "" || formData.pricePerTicket === undefined
+        ? 0
+        : Number(formData.pricePerTicket),
   };
 }
-
 export async function getEvents() {
   const res = await fetch(`${getApiBaseUrl()}/api/events`);
   const data = await res.json();

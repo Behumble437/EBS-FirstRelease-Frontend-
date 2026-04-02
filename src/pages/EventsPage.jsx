@@ -61,6 +61,10 @@ export default function EventsPage() {
               <p><strong>Location:</strong> {event.location}</p>
               <p><strong>Capacity:</strong> {event.capacity}</p>
               <p><strong>Description:</strong> {event.description}</p>
+              <p>
+  <strong>Price Per Ticket:</strong> $
+  {Number(event.pricePerTicket || 0).toFixed(2)}
+</p>
 
               <div className="card-actions">
                 {isLoggedIn && (

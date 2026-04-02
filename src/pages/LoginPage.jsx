@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { loginUser } from "../api/authApi";
 
@@ -8,6 +8,7 @@ export default function LoginPage() {
     email: "",
     password: "",
   });
+
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -23,7 +24,7 @@ export default function LoginPage() {
     try {
       const data = await loginUser(form);
       login(data.user, data.token);
-      navigate("/");
+      navigate("/events");
     } catch (err) {
       setError(err.message);
     }
@@ -58,8 +59,14 @@ export default function LoginPage() {
           />
         </div>
 
-        <button type="submit">Login</button>
+        <button type="submit" className="primary-btn">
+          Login
+        </button>
       </form>
+
+      <p style={{ marginTop: "16px" }}>
+        Don&apos;t have an account? <Link to="/register">Register here</Link>
+      </p>
     </div>
   );
 }
