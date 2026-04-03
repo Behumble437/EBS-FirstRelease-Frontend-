@@ -2,20 +2,28 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { createBooking, getBookingById, updateBooking } from "../api/bookingApi";
 import { getEvents } from "../api/eventApi";
+import { useAuth } from "../context/AuthContext";
+import { isAdminRole } from "../utils/roles";
 
 export default function BookingFormPage() {
   const [form, setForm] = useState({
     eventId: "",
     ticketsBooked: 1,
+    status: "confirmed",
+    paymentStatus: "unpaid",
   });
 
   const [events, setEvents] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const { id } = useParams();
   const [searchParams] = useSearchParams();
+  const { user } = useAuth();
+
   const isEditMode = Boolean(id);
+  const isAdmin = isAdminRole(user?.role);
 
   useEffect(() => {
     async function loadData() {
@@ -35,7 +43,9 @@ export default function BookingFormPage() {
           const booking = await getBookingById(id);
           setForm({
             eventId: booking.event?._id || booking.event || "",
-            ticketsBooked: booking.ticketsBooked,
+            ticketsBooked: booking.ticketsBooked || 1,
+            status: booking.status || "confirmed",
+            paymentStatus: booking.paymentStatus || "unpaid",
           });
         }
       } catch (err) {
@@ -69,9 +79,16 @@ export default function BookingFormPage() {
       setError("");
 
       if (isEditMode) {
-        await updateBooking(id, {
+        const updateData = {
           ticketsBooked: Number(form.ticketsBooked),
-        });
+        };
+
+        if (isAdmin) {
+          updateData.status = form.status;
+          updateData.paymentStatus = form.paymentStatus;
+        }
+
+        await updateBooking(id, updateData);
       } else {
         await createBooking({
           eventId: form.eventId,
@@ -138,6 +155,36 @@ export default function BookingFormPage() {
             required
           />
         </div>
+
+        {isEditMode && isAdmin && (
+          <>
+            <div className="form-group">
+              <label>Status</label>
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+              >
+                <option value="confirmed">confirmed</option>
+                <option value="cancelled">cancelled</option>
+                <option value="pending">pending</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <label>Payment Status</label>
+              <select
+                name="paymentStatus"
+                value={form.paymentStatus}
+                onChange={handleChange}
+              >
+                <option value="paid">paid</option>
+                <option value="unpaid">unpaid</option>
+                <option value="refunded">refunded</option>
+              </select>
+            </div>
+          </>
+        )}
 
         <div className="form-actions">
           <button type="submit" className="primary-btn" disabled={loading}>

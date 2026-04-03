@@ -10,43 +10,26 @@ export default function BookingsPage() {
   const [success, setSuccess] = useState("");
   const { user } = useAuth();
 
-  function getUserId(currentUser) {
-    return currentUser?._id || currentUser?.id || currentUser?.userId || "";
-  }
+  const isAdmin = isAdminRole(user?.role);
+
+  //only admin can see all bookings
 
   async function loadBookings() {
     try {
       setError("");
-      const data = await getBookings(!isAdminRole(user?.role));
-
-      // admin can see all bookings
-      if (isAdminRole(user?.role)) {
-        setBookings(data);
-        return;
-      }
-
-      // normal user only sees their own bookings
-      const currentUserId = getUserId(user);
-
-      const myBookings = data.filter((booking) => {
-        const bookingUserId =
-          booking?.user?._id ||
-          booking?.user?.id ||
-          booking?.user ||
-          booking?.userId ||
-          "";
-
-        return String(bookingUserId) === String(currentUserId);
-      });
-
-      setBookings(myBookings);
+      const data = await getBookings(!isAdmin);
+      setBookings(data);
     } catch (err) {
       setError(err.message);
     }
   }
 
+  //user only see their own bookings
+
   useEffect(() => {
-    loadBookings();
+    if (user) {
+      loadBookings();
+    }
   }, [user]);
 
   async function handleDelete(id) {
@@ -67,7 +50,7 @@ export default function BookingsPage() {
     <div className="page-container">
       <div className="section-header">
         <h1 className="section-title">
-          {isAdminRole(user?.role) ? "All Bookings" : "My Bookings"}
+          {isAdmin ? "All Bookings" : "My Bookings"}
         </h1>
 
         <Link to="/bookings/new" className="primary-btn">
@@ -84,7 +67,7 @@ export default function BookingsPage() {
         <div className="card-grid">
           {bookings.map((booking) => (
             <div key={booking._id} className="card">
-              <h3>{booking.event?.title || "Event"}</h3>
+              <h3>{booking.event?.title || booking.event?.name || "Event"}</h3>
               <p>
                 <strong>Date:</strong>{" "}
                 {booking.event?.date
@@ -115,6 +98,7 @@ export default function BookingsPage() {
                 >
                   Modify
                 </Link>
+
                 <button
                   onClick={() => handleDelete(booking._id)}
                   className="danger-btn"
